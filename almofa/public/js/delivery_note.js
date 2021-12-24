@@ -30,48 +30,46 @@ frappe.ui.form.on("Delivery Note", {
 
 		let show_description = function (idx = null, item_code = null, batch_no = null, exist = null) {
 			if (exist) {
-				let msg=__('Found: Row #{0}: {1}, has scanned batch no {2}.', [idx, item_code, batch_no])
+				let msg = __('Found: Row #{0}: {1}, has scanned batch no {2}.', [idx, item_code, batch_no])
 				scan_batch_no_field.set_new_description(msg);
-				frappe.show_alert({ message: msg, indicator: 'green' });
+				frappe.show_alert({
+					message: msg,
+					indicator: 'green'
+				});
 			} else {
-				let msg=__('Not Found: Batch no {0} doesnot belong to any item below.', [batch_no])
+				let msg = __('Scanned batch no {0} doesnot belong to any item below.', [batch_no])
 				scan_batch_no_field.set_new_description(msg);
-				frappe.show_alert({ message: msg, indicator: 'orange' });
+				frappe.msgprint({
+					title: __('Not Found'),
+					message: msg,
+					indicator: 'red'
+				});
 			}
 		}
 
 		if (frm.doc.scan_batch_no_cf) {
-			frappe.call({
-				method: "almofa.api.search_serial_or_batch_or_barcode_number",
-				args: {
-					search_value: frm.doc.scan_batch_no_cf
+			let existing_item_row = false
+			$.each(frm.doc.items || [], function (i, item) {
+				if (item.batch_no) {
+					if (!item.scanned_batch_no_cf) {
+						if (item.batch_no == frm.doc.scan_batch_no_cf) {
+							show_description(item.idx, item.item_code, item.batch_no, true);
+							frappe.model.set_value(item.doctype, item.name, {
+								scanned_batch_no_cf: item.batch_no
+							});
+							existing_item_row = true
+						}
+					}
 				}
-			}).then(r => {
-				const data = r && r.message;
-				if (!data || Object.keys(data).length === 0) {
-					let msg=__('Cannot find Item with this batch no in system.')
-					scan_batch_no_field.set_new_description(msg);
-					frappe.show_alert({ message: msg, indicator: 'red' });
-					return;
-				}
-				let row_to_modify = null;
-				const existing_item_row = frm.doc.items.find(d => d.batch_no === data.batch_no);
-				const blank_item_row = frm.doc.items.find(d => !d.batch_no);
-
-				if (existing_item_row) {
-					row_to_modify = existing_item_row;
-					show_description(row_to_modify.idx, row_to_modify.item_code, row_to_modify.batch_no, true);
-					frm.from_barcode = true;
-					frappe.model.set_value(row_to_modify.doctype, row_to_modify.name, {
-						scanned_batch_no_cf: data.batch_no,
-					});
-				} else {
-					show_description(null, null, frm.doc.scan_batch_no_cf, null);
-				}
-				scan_batch_no_field.set_value('');
-				refresh_field("items");
 			});
+
+			if (existing_item_row == false) {
+				show_description(null, null, frm.doc.scan_batch_no_cf, null);
+			}
+
+			scan_batch_no_field.set_value('');
+			refresh_field("items");
 		}
 		return false;
-	},
+	}
 })
