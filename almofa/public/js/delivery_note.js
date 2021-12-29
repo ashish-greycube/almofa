@@ -27,17 +27,24 @@ frappe.ui.form.on("Delivery Note", {
 	},
 	scan_batch_no_cf: function (frm) {
 		let scan_batch_no_field = frm.fields_dict["scan_batch_no_cf"];
-
-		let show_description = function (idx = null, item_code = null, batch_no = null, exist = null) {
-			if (exist) {
+		let show_description = function (idx = null, item_code = null, batch_no = null, exist) {
+			if (exist == 1) {
 				let msg = __('Found: Row #{0}: {1}, has scanned batch no {2}.', [idx, item_code, batch_no])
 				scan_batch_no_field.set_new_description(msg);
 				frappe.show_alert({
 					message: msg,
 					indicator: 'green'
 				});
-			} else {
-				let msg = __('Scanned batch no {0} doesnot belong to any item below.', [batch_no])
+			} else if (exist == 2) {
+				let msg = __('Scanned barcode {0} doesnot belong to any item below. Check UOM, Batch No field', [batch_no])
+				scan_batch_no_field.set_new_description(msg);
+				frappe.msgprint({
+					title: __('Not Found'),
+					message: msg,
+					indicator: 'orange'
+				});
+			} else if (exist == 0) {
+				let msg = __('Cannot find item with {0} barcode', [batch_no])
 				scan_batch_no_field.set_new_description(msg);
 				frappe.msgprint({
 					title: __('Not Found'),
@@ -48,27 +55,40 @@ frappe.ui.form.on("Delivery Note", {
 		}
 
 		if (frm.doc.scan_batch_no_cf) {
-			let existing_item_row = false
-			$.each(frm.doc.items || [], function (i, item) {
-				if (item.batch_no) {
-					if (!item.scanned_batch_no_cf) {
-						if (item.batch_no == frm.doc.scan_batch_no_cf) {
-							show_description(item.idx, item.item_code, item.batch_no, true);
-							frappe.model.set_value(item.doctype, item.name, {
-								scanned_batch_no_cf: item.batch_no
-							});
-							existing_item_row = true
-						}
-					}
+			frappe.call({
+				method: "almofa.api.search_serial_or_batch_or_barcode_number",
+				args: {
+					scanned_barcode: frm.doc.scan_batch_no_cf
 				}
-			});
-
-			if (existing_item_row == false) {
-				show_description(null, null, frm.doc.scan_batch_no_cf, null);
-			}
-
-			scan_batch_no_field.set_value('');
-			refresh_field("items");
+			}).then(r => {
+				const data = r && r.message;
+				if (!data || Object.keys(data).length === 0) {
+					// no match
+					show_description(null, null, frm.doc.scan_batch_no_cf, 0);
+					scan_batch_no_field.set_value('');
+					refresh_field("items");
+					return;
+				}
+				const existing_item_row = frm.doc.items.find(d => (d.batch_no === data.batch_no && d.item_code === data.item_code && d.uom === data.uom));
+				if (existing_item_row) {
+					// exact match
+					frappe.model.set_value(existing_item_row.doctype, existing_item_row.name, {
+						scanned_uom_cf: data.uom,
+						scanned_batch_no_cf: data.batch_no,
+						scanned_barcode_cf: frm.doc.scan_batch_no_cf
+					});
+					show_description(existing_item_row.idx, existing_item_row.item_code, existing_item_row.batch_no, 1);
+					scan_batch_no_field.set_value('');
+					refresh_field("items");
+					return
+				} else {
+					// not match with child item table
+					show_description(null, null, frm.doc.scan_batch_no_cf, 2);
+					scan_batch_no_field.set_value('');
+					refresh_field("items");
+					return
+				}
+			})
 		}
 		return false;
 	}
