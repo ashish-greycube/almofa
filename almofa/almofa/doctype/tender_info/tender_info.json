@@ -1,0 +1,131 @@
+{
+ "autoname": "naming_series:",
+ "creation": "2022-02-03 16:25:45.837743",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "tender_name",
+  "customer",
+  "column_break_4",
+  "tender_date",
+  "tender_no",
+  "item_section",
+  "tender_info_item_detail",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "default": "TN.#",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Series",
+   "options": "TN.#",
+   "reqd": 1
+  },
+  {
+   "fieldname": "tender_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Tender Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Customer"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Today",
+   "fieldname": "tender_date",
+   "fieldtype": "Date",
+   "label": "Tender Date"
+  },
+  {
+   "fieldname": "tender_no",
+   "fieldtype": "Data",
+   "label": "Tender No"
+  },
+  {
+   "fieldname": "item_section",
+   "fieldtype": "Section Break",
+   "label": "Item"
+  },
+  {
+   "fieldname": "tender_info_item_detail",
+   "fieldtype": "Table",
+   "options": "Tender Info Item Detail"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Tender Info",
+   "print_hide": 1,
+   "read_only": 1
+  }
+ ],
+ "is_submittable": 1,
+ "modified": "2022-02-03 16:29:53.730731",
+ "modified_by": "Administrator",
+ "module": "Almofa",
+ "name": "Tender Info",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales Master Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "search_fields": "tender_name,customer,tender_no,tender_date",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "title_field": "tender_name",
+ "track_changes": 1
+}

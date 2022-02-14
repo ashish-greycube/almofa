@@ -1,0 +1,77 @@
+{
+ "creation": "2022-02-03 16:21:18.739806",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "item",
+  "item_name",
+  "item_tender_code",
+  "qty",
+  "quoted_qty",
+  "ordered_qty"
+ ],
+ "fields": [
+  {
+   "columns": 2,
+   "fieldname": "item",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "columns": 2,
+   "fetch_from": "item.item_name",
+   "fieldname": "item_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Item Name",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "item_tender_code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Item Tender Code"
+  },
+  {
+   "allow_on_submit": 1,
+   "columns": 1,
+   "fieldname": "qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Qty",
+   "reqd": 1
+  },
+  {
+   "columns": 2,
+   "fieldname": "quoted_qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Quoted Qty",
+   "read_only": 1
+  },
+  {
+   "columns": 2,
+   "fieldname": "ordered_qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Ordered Qty",
+   "read_only": 1
+  }
+ ],
+ "istable": 1,
+ "modified": "2022-02-03 16:28:54.860640",
+ "modified_by": "Administrator",
+ "module": "Almofa",
+ "name": "Tender Info Item Detail",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
