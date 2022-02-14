@@ -82,7 +82,18 @@ doctype_js = {"Delivery Note" : "public/js/delivery_note.js"}
 doc_events = {
 	"Delivery Note": {
 		"on_submit": "almofa.api.scanned_batch_no_validation",
-	}
+	},
+	"Quotation": {
+		"validate": "almofa.almofa.doctype.tender_info.tender_info.validate_against_tender_info",
+		"on_submit":"almofa.almofa.doctype.tender_info.tender_info.update_quoted_qty_of_tender_info",
+		"on_cancel":"almofa.almofa.doctype.tender_info.tender_info.update_quoted_qty_of_tender_info"
+	},
+	"Sales Order": {
+		"validate": "almofa.almofa.doctype.tender_info.tender_info.validate_against_tender_info",
+		"on_submit":"almofa.almofa.doctype.tender_info.tender_info.update_quoted_qty_of_tender_info",
+		"on_update_after_submit":"almofa.almofa.doctype.tender_info.tender_info.update_quoted_qty_of_tender_info",
+		"on_cancel":"almofa.almofa.doctype.tender_info.tender_info.update_quoted_qty_of_tender_info"
+	}		
 }
 
 # Scheduled Tasks
