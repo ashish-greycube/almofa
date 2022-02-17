@@ -6,7 +6,7 @@ import frappe, erpnext, json
 from frappe import _, scrub, ValidationError
 from frappe.model.document import Document
 from frappe.model.mapper import get_mapped_doc
-from frappe.utils import get_link_to_form
+from frappe.utils import get_link_to_form,flt
 
 class TenderInfo(Document):
 	def validate(self):
@@ -132,10 +132,15 @@ def update_quoted_qty_of_tender_info(self,method):
 						ti_item.quoted_qty=ti_item.quoted_qty-item.qty
 						msg += _('Row #{0} : {1} item quoted qty is updated for tender info {2}. <br>'.format(ti_item.idx,ti_item.item,frappe.bold(get_link_to_form('Tender Info',self.tender_info_cf))))
 						qo_item_found=True
-					elif self.doctype=='Sales Order' and (method=='on_submit' or method=='on_update_after_submit'):
+					elif self.doctype=='Sales Order' and method=='on_submit':
 						ti_item.ordered_qty=ti_item.ordered_qty+item.qty
 						msg += _('Row #{0} : {1} item ordered qty is updated for tender info {2}. <br>'.format(ti_item.idx,ti_item.item,frappe.bold(get_link_to_form('Tender Info',self.tender_info_cf))))
 						qo_item_found=True
+					elif self.doctype=='Sales Order' and method=='on_update_after_submit':
+						existing_qty=sum_of_existing_so(self.tender_info_cf,item.item_code,self.name)
+						ti_item.ordered_qty=existing_qty+item.qty
+						msg += _('Row #{0} : {1} item ordered qty is updated for tender info {2}. <br>'.format(ti_item.idx,ti_item.item,frappe.bold(get_link_to_form('Tender Info',self.tender_info_cf))))
+						qo_item_found=True						
 					elif self.doctype=='Sales Order' and method=='on_cancel':
 						ti_item.ordered_qty=ti_item.ordered_qty-item.qty
 						msg += _('Row #{0} : {1} item ordered qty is updated for tender info {2}. <br>'.format(ti_item.idx,ti_item.item,frappe.bold(get_link_to_form('Tender Info',self.tender_info_cf))))
@@ -144,6 +149,17 @@ def update_quoted_qty_of_tender_info(self,method):
 			ti.save(ignore_permissions=True)
 			if len(msg)>0:
 				frappe.msgprint(msg)
+
+def sum_of_existing_so(tender_info,item_code,so_name):
+	existing_qty = frappe.db.sql("""
+SELECT  sum(sot.qty)  FROM  `tabSales Order` so inner join `tabSales Order Item` sot 
+on so.name=sot.parent 
+where so.tender_info_cf = %s
+and sot.item_code = %s
+and so.docstatus = 1
+and so.name != %s
+	""", (tender_info,item_code, so_name))
+	return flt(existing_qty[0][0]) if existing_qty else 0	
 
 def validate_against_tender_info(self,method):
 	if self.tender_info_cf:
