@@ -80,9 +80,9 @@ doctype_js = {"Delivery Note" : "public/js/delivery_note.js"}
 # Hook on document methods and events
 
 doc_events = {
-	"Delivery Note": {
-		"on_submit": "almofa.api.scanned_batch_no_validation",
-	},
+	# "Delivery Note": {
+	# 	"on_submit": "almofa.api.scanned_batch_no_validation",
+	# },
 	"Quotation": {
 		"validate": "almofa.almofa.doctype.tender_info.tender_info.validate_against_tender_info",
 		"on_submit":"almofa.almofa.doctype.tender_info.tender_info.update_quoted_qty_of_tender_info",
