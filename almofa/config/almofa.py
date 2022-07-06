@@ -4,24 +4,24 @@ from frappe import _
 
 def get_data():
     config = [
-        {'label': _('Tender'), 
-        'items': [
+        {
+            "label": _("Tender"),
+            "items": [
+                {"type": "doctype", "name": "Tender Info", "label": _("Tender Info")},
+                {"type": "doctype", "name": "Quotation", "label": _("Quotation")},
+                {"type": "doctype", "name": "Sales Order", "label": _("Sales Order")},
+            ],
+        },
+        {
+            "label": _("Reports"),
+            "items": [
                 {
-                    "type": "doctype",
-                    "name": "Tender Info",
-                    "label": _("Tender Info")
+                    "type": "report",
+                    "name": "Almofa Net Profit",
+                    "description": _("Almofa Net Profit"),
+                    "is_query_report": True,
                 },
-                {
-                    "type": "doctype",
-                    "name": "Quotation",
-                    "label": _("Quotation")
-                },
-                {
-                    "type": "doctype",
-                    "name": "Sales Order",
-                    "label": _("Sales Order")
-                }                                   
-            ]
-        }
+            ],
+        },
     ]
-    return config    
+    return config
