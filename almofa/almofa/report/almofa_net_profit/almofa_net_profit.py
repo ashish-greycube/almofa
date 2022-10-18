@@ -22,12 +22,15 @@ coalesce(tpi_coll.amount,0) + coalesce(coll.amount,0) collection_fees ,
 coalesce(tpi_trans.amount,0) + coalesce(trans.amount,0) transport_fees , 
 coalesce(tpi_dlay.amount,0) + coalesce(dlay.amount,0) dlay_fine , 
 coalesce(tpi_oex.amount,0) + coalesce(oex.amount,0) other_expenses ,
+coalesce(tpi_coll.amount,0) + coalesce(coll.amount,0) + 
+coalesce(tpi_dlay.amount,0) + coalesce(dlay.amount,0) + 
+coalesce(tpi_trans.amount,0) + coalesce(trans.amount,0) total_expense ,
 tsi.base_net_total - coalesce(si_cogs.debit, 0)- coalesce(cogs.debit,0) 
-- coalesce(dlay.amount,0) - coalesce(trans.amount,0) - coalesce(coll.amount,0) - coalesce(oex.amount,0) 
-- coalesce(tpi_dlay.amount,0) - coalesce(tpi_trans.amount,0) - coalesce(tpi_coll.amount,0) - coalesce(tpi_oex.amount,0) net_profit , 
+- coalesce(dlay.amount,0) - coalesce(trans.amount,0) - coalesce(coll.amount,0) 
+- coalesce(tpi_dlay.amount,0) - coalesce(tpi_trans.amount,0) - coalesce(tpi_coll.amount,0) net_profit , 
 round(100 * (tsi.base_net_total - coalesce(si_cogs.debit, 0) - coalesce(cogs.debit,0) 
-- coalesce(dlay.amount,0) - coalesce(trans.amount,0) - coalesce(coll.amount,0) - coalesce(oex.amount,0)
-- coalesce(tpi_dlay.amount,0) - coalesce(tpi_trans.amount,0) - coalesce(tpi_coll.amount,0) - coalesce(tpi_oex.amount,0)) /tsi.base_net_total,2) net_profit_pct
+- coalesce(dlay.amount,0) - coalesce(trans.amount,0) - coalesce(coll.amount,0)
+- coalesce(tpi_dlay.amount,0) - coalesce(tpi_trans.amount,0) - coalesce(tpi_coll.amount,0)) /tsi.base_net_total,2) net_profit_pct
 from `tabSales Invoice` tsi
 left outer join (
     select voucher_no , sum(debit) debit from `tabGL Entry` tge 
@@ -128,7 +131,7 @@ order by tsi.name
             conditions=get_conditions(filters)
         ),
         filters,
-        debug=1,
+        debug=0,
     )
 
 
@@ -146,7 +149,7 @@ def get_columns(filters):
         Collection Fees,collection_fees,Currency,120
         Transport Fees,transport_fees,Currency,120
         Delay Fine,delay_fine,Currency,120
-        Other Expenses,other_expenses,Currency,120
+        Total Expense,total_expense,Currency,120
         Net Profit,net_profit,Currency,120
         Net Profit %,net_profit_percent,Percent,120
     """
