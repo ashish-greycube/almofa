@@ -21,6 +21,12 @@ def get_data():
                     "description": _("Almofa Net Profit"),
                     "is_query_report": True,
                 },
+                {
+                    "type": "report",
+                    "name": "Almofa Tender Report",
+                    "description": _("Almofa Tender Report"),
+                    "is_query_report": True,
+                },                
             ],
         },
     ]
